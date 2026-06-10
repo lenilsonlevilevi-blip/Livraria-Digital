@@ -4,9 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Carrinho</title>
-
   <link rel="stylesheet" href="styles/livros.css">
 </head>
 
@@ -20,20 +18,64 @@
 
     <h2 id="totalItens">0 itens</h2>
 
+    <!-- Lista dos livros -->
+    <ul id="listaLivros"></ul>
+
     <button onclick="limparCarrinho()">
       Limpar Carrinho
     </button>
 
+    <button onclick="finalizarCompra()">
+      Finalizar Compra
+    </button>
     <br><br>
 
-    <a href="index.html">
+    <a href="/livraria_digital/index.php">
       ← Voltar ao catálogo
     </a>
 
   </div>
 
-  <script src="scripts/script.js"></script>
+  <script>
+  let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
 
-</body>
+  let lista = document.getElementById("listaLivros");
+  let total = 0;
 
-</html>
+  carrinho.forEach(function (livro) {
+
+    let item = document.createElement("li");
+
+    item.textContent = livro.nome + " - R$ " + livro.preco.toFixed(2).replace(".", ",");
+
+    lista.appendChild(item);
+
+    total += livro.preco;
+  });
+
+  document.getElementById("totalItens").innerText =
+    carrinho.length + " item(ns) - Total: R$ " + total.toFixed(2).replace(".", ",");
+
+  function limparCarrinho() {
+    localStorage.removeItem("carrinho");
+    location.reload();
+  }
+
+  function finalizarCompra() {
+    let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+
+    fetch("finalizar_compra.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: "carrinho=" + JSON.stringify(carrinho)
+    })
+    .then(res => res.text())
+    .then(res => {
+      alert("Compra finalizada com sucesso!");
+      localStorage.removeItem("carrinho");
+      location.reload();
+    });
+  }
+</script>

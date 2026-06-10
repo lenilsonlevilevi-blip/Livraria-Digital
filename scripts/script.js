@@ -1,63 +1,48 @@
-// CONTADOR DO CARRINHO
+function getCarrinho() {
+  return JSON.parse(localStorage.getItem("carrinho")) || [];
+}
 
-let contador = localStorage.getItem("carrinho") || 0;
-
-// Atualiza contador na tela
-function atualizarCarrinho() {
-
-  const elemento = document.getElementById("contador");
-
-  if (elemento) {
-    elemento.innerText = contador;
-  }
-
-  const totalItens = document.getElementById("totalItens");
-
-  if (totalItens) {
-    totalItens.innerText = contador + " itens";
+// Atualiza contador
+function atualizarContador() {
+  const contador = document.getElementById("contador");
+  if (contador) {
+    contador.innerText = getCarrinho().length;
   }
 }
 
-// Adicionar item
-function adicionarCarrinho() {
+// Adicionar ao carrinho
+function adicionarCarrinho(nome, preco) {
+  let carrinho = getCarrinho();
 
-  contador++;
+  carrinho.push({
+    nome: nome,
+    preco: preco
+  });
 
-  localStorage.setItem("carrinho", contador);
+  localStorage.setItem("carrinho", JSON.stringify(carrinho));
 
-  atualizarCarrinho();
-
-  alert("Livro adicionado ao carrinho!");
+  atualizarContador();
 }
 
-// Limpar carrinho
-function limparCarrinho() {
+function finalizarCompra() {
+  let carrinho = getCarrinho();
 
-  contador = 0;
-
-  localStorage.setItem("carrinho", contador);
-
-  atualizarCarrinho();
-
-  alert("Carrinho limpo!");
-}
-
-// LOGIN
-const form = document.getElementById("formLogin");
-
-if (form) {
-
-  form.addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-    const usuario = document.getElementById("usuario").value;
-
-    alert("Bem-vindo, " + usuario + "!");
-
-    window.location.href = "index.html";
+  fetch("finalizar_compra.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: "carrinho=" + encodeURIComponent(JSON.stringify(carrinho))
+  })
+  .then(res => res.text())
+  .then(res => {
+    console.log(res);
+    alert("Compra finalizada com sucesso!");
+    localStorage.removeItem("carrinho");
+    atualizarContador();
+    location.reload();
   });
 }
 
-// Atualiza ao carregar página
-atualizarCarrinho();
+// Inicializa contador ao carregar página
+atualizarContador();
