@@ -12,14 +12,15 @@ Projeto de livraria online desenvolvido com PHP, MySQL, HTML, CSS e JavaScript.
 👤 Cadastro e login de usuários com senha criptografada
 📱 Layout responsivo
 
+ 🛠️ Tecnologias
 
-🛠️ Tecnologias utilizadas
-
-PHP 8+
-MySQL
-HTML5
-CSS3
-JavaScript
+- PHP
+- MySQL
+- HTML5
+- CSS3
+- JavaScript
+- Git
+- GitHub
 
 
 🗄️ Banco de dados
